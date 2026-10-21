@@ -1,0 +1,23 @@
+services:
+  govllm:
+    build:
+      context: .
+      args:
+        VLLM_IMAGE: ${VLLM_IMAGE:-vllm/vllm-openai@sha256:befccf0e7e4089aa23926bb6f887a85c0d46c2a99e6de5c5ffdf5cb7957c5b34}
+    image: govllm:local
+    command: ["serve", "--model", "${MODEL:-Qwen/Qwen2.5-0.5B-Instruct}"]
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - models:/models
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      HF_TOKEN: ${HF_TOKEN:-}
+      VLLM_API_KEY: ${VLLM_API_KEY:-}
+    ipc: host
+    gpus: all
+    restart: unless-stopped
+
+volumes:
+  models:
+  hf-cache:
